@@ -6,20 +6,16 @@ from backend.models import User
 from jose import jwt, JWTError
 import os
 from dotenv import load_dotenv
-
 load_dotenv()
-
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
-
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -30,14 +26,12 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         return user
     except JWTError:
         raise HTTPException(status_code=403, detail="Invalid token")
-
 def require_role(role_name: str):
     def checker(user: User = Depends(get_current_user)):
         if user.role.name != role_name:
             raise HTTPException(status_code=403, detail=f"{role_name} role required")
         return user
     return checker
-
 def require_role_any(roles: list):
     def checker(user: User = Depends(get_current_user)):
         if user.role.name not in roles:
