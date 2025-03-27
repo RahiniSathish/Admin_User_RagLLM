@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv
+passlib
+python-jose
+pydantic
+streamlit
+requests
+langchain
+langchain-openai
+pytesseract
+python-docx
+PyMuPDF
+Pillow
+
