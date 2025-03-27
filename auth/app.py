@@ -2,13 +2,11 @@ import streamlit as st
 import requests
 
 SERVER = "http://localhost:8000"
-st.title("📄 Chat with Knowledge Base")
-
+st.title("Chat with Knowledge Base")
 if "token" not in st.session_state:
     st.session_state.token = None
-
 with st.sidebar:
-    st.markdown("### 🔐 Login or Register")
+    st.markdown("Login or Register")
     choice = st.radio("Select", ["Login", "Register"])
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
@@ -23,26 +21,25 @@ with st.sidebar:
                 data = r.json()
                 if "access_token" in data:
                     st.session_state.token = data["access_token"]
-                    st.success("✅ Logged in successfully!")
+                    st.success("Logged in successfully!")
                 else:
-                    st.success(data.get("message", "✅ Registered. Waiting for admin approval."))
+                    st.success(data.get("message", "Registered. Waiting for admin approval."))
             else:
                 try:
                     error_data = r.json()
-                    st.error(f"❌ {error_data.get('detail', 'Something went wrong')}")
-                    st.text(f"💬 Full response: {r.text}")
+                    st.error(f" {error_data.get('detail', 'Something went wrong')}")
+                    st.text(f"Full response: {r.text}")
                 except Exception:
-                    st.error("❌ Failed to decode backend response.")
-                    st.text(f"🔎 Raw response: {r.text}")
+                    st.error("Failed to decode backend response.")
+                    st.text(f" Raw response: {r.text}")
         except Exception as e:
-            st.error(f"❌ Network error: {e}")
+            st.error(f"Network error: {e}")
 
 
 if st.session_state.token:
     headers = {"Authorization": f"Bearer {st.session_state.token}"}
-    st.success("🔓 Access granted")
+    st.success("Access granted")
     
-    # ✅ Check role
     r = requests.get(f"{SERVER}/me", headers=headers)
     if r.status_code == 200:
         role = r.json().get("role")
@@ -51,9 +48,9 @@ if st.session_state.token:
 
         
         if role == "Admin":
-            st.markdown("## 🔐 Admin Dashboard")
+            st.markdown("Admin Dashboard")
 
-            st.markdown("### ✅ Approve a User")
+            st.markdown("Approve a User")
             email_to_approve = st.text_input("Email to approve")
             role_to_assign = st.selectbox("Assign Role", ["Admin", "User"])
             if st.button("Approve User"):
@@ -66,7 +63,7 @@ if st.session_state.token:
                 else:
                     st.error(approve_resp.json().get("detail", "Approval failed"))
 
-            st.markdown("### ❌ Delete a User")
+            st.markdown("Delete a User")
             email_to_delete = st.text_input("Email to delete")
             if st.button("Delete User"):
                 delete_resp = requests.delete(f"{SERVER}/admin/delete-user", params={"email": email_to_delete}, headers=headers)
@@ -76,7 +73,7 @@ if st.session_state.token:
                     st.error(delete_resp.json().get("detail", "Deletion failed"))
 
         else:
-            st.info(f"👤 You are logged in as: `{role}` — limited access.")
+            st.info(f" You are logged in as: `{role}` — limited access.")
 
         
         file = st.file_uploader("Upload a document")
@@ -93,8 +90,8 @@ if st.session_state.token:
             try:
                 r = requests.get(f"{SERVER}/query", headers=headers, params={"q": question})
                 if r.status_code == 200:
-                    st.write("💬", r.json()["answer"])
+                    st.write(r.json()["answer"])
                 else:
                     st.error(r.json().get("detail", "Query failed"))
             except Exception as e:
-                st.error(f"❌ Query error: {e}")
+                st.error(f" Query error: {e}")
