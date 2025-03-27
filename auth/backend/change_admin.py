@@ -5,7 +5,7 @@ from backend.models import User, Role
 db = SessionLocal()
 
 # Get the user you want to promote
-email = "shanthiraj4@gmail.com"
+email = " "
 user = db.query(User).filter_by(email=email).first()
 
 # Get or create Admin role
