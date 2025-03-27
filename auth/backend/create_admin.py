@@ -5,8 +5,8 @@ from backend.auth import hash_password
 
 db = SessionLocal()
 
-email = "sathishjos76@gmail.com"
-password = "Mithwin@162815"
+email = " "
+password = " "
 
 # Get or create Admin role
 role = db.query(Role).filter_by(name="Admin").first()
